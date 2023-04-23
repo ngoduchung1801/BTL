@@ -34,14 +34,14 @@ public class Player extends Entity {
     public void setDefaultValues() {
         x = gp.tileSize;
         y = gp.tileSize;
-        speed = 4;
+        speed = 1;
         dir = "down";
         invincible = false;
         dying = false;
         dyingCounter = 0;
 
         shoesCount = 0;
-        heartCount = 5;
+        heartCount = 1;
         bombCount = 1;
         potionCount = 0;
 
@@ -57,14 +57,14 @@ public class Player extends Entity {
     public void stage2DefaultValues(){
         x = gp.tileSize;
         y = gp.tileSize;
-        speed = 4;
+        speed = 1;
         dir = "down";
         invincible = false;
         dying = false;
         dyingCounter = 0;
 
         shoesCount = 0;
-        heartCount = 5;
+        heartCount = 1;
         bombCount = 1;
         potionCount = 0;
 
