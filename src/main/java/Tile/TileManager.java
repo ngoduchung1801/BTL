@@ -21,7 +21,7 @@ public class TileManager extends Tile {
         int mapRandomNum = random.nextInt(mapCount) + 1;
 
         getTileImage();
-        drawMap("src/main/resources/map/map" + 1 + ".txt");
+        drawMap("src/main/resources/map/map" + mapRandomNum + ".txt");
     }
 
     public void getTileImage() {
@@ -140,3 +140,4 @@ public class TileManager extends Tile {
         }
     }
 }
+

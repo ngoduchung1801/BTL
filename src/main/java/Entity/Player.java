@@ -11,6 +11,7 @@ import java.io.IOException;
 
 public class Player extends Entity {
     KeyControl keyC;
+    public int introTime, outroTime;
 
     public Player(GamePanel gp, KeyControl keyC) {
         super(gp);
@@ -36,14 +37,43 @@ public class Player extends Entity {
         speed = 4;
         dir = "down";
         invincible = false;
+        dying = false;
+        dyingCounter = 0;
 
         shoesCount = 0;
-        heartCount = 3;
+        heartCount = 5;
         bombCount = 1;
         potionCount = 0;
 
         minute = 5;
         second = 0;
+        introTime = 180;
+        outroTime = 150;
+
+        enemyCount = 3;
+        monsterCount = -1;
+    }
+
+    public void stage2DefaultValues(){
+        x = gp.tileSize;
+        y = gp.tileSize;
+        speed = 4;
+        dir = "down";
+        invincible = false;
+        dying = false;
+        dyingCounter = 0;
+
+        shoesCount = 0;
+        heartCount = 5;
+        bombCount = 1;
+        potionCount = 0;
+
+        minute = 5;
+        second = 0;
+        introTime = 180;
+
+        enemyCount = -1;
+        monsterCount = 3;
     }
 
     public void getPlayerImage() {
@@ -84,11 +114,17 @@ public class Player extends Entity {
             collisionOn = false;
             gp.CC.checkTile(this);
 
-            int itemIndex = gp.CC.checkItem(this, true);
+            itemIndex = gp.CC.checkItem(this);
             pickUpItem(itemIndex);
 
             int enemyIndex = gp.CC.checkEntity(this, gp.enemy);
             interactEnemy(enemyIndex);
+            int monsterIndex = gp.CC.checkEntity(this, gp.monster);
+            interactMonster(monsterIndex);
+
+            gp.CC.playerCheckBomb();
+
+            gp.CC.checkBrick(this);
 
             if (!collisionOn) {
                 switch (dir) {
@@ -124,10 +160,13 @@ public class Player extends Entity {
         }
 
         if (heartCount == 0) {
-            gp.gameState = gp.endState;
+            dying = true;
+            if (dyingCounter > 60) {
+                gp.gameState = gp.endState;
+            }
         }
 
-        if (invincible) {
+        if (heartCount >= 1 && invincible) {
             invincibleCounter++;
             if (invincibleCounter > 60) {
                 invincible = false;
@@ -139,36 +178,54 @@ public class Player extends Entity {
             bombCount--;
             bombSpawn.set(x, y, dir, true);
             gp.bombList.add(bombSpawn);
+//            spawnTime = 60;
         }
+//        spawnTime--;
+//        if (enemyCount == 2){
+//            gp.playSound(2);
+//        } else if (enemyCount == 1) {
+//            gp.playSound(3);
+//        } else if (enemyCount == 0){
+//            gp.playSound(4);
+//        } else if (monsterCount == 2) {
+//            gp.playSound(5);
+//        } else if (monsterCount == 1) {
+//            gp.playSound(6);
+//        } else if (monsterCount == 0) {
+//            gp.playSound(7);
+//        }
     }
 
     public void pickUpItem(int index) {
         if (index != -1) {
+            gp.playSound(1);
             switch (gp.items[index].name) {
                 case "shoes" -> {
                     shoesCount++;
                     speed++;
-                    gp.items[index] = null;
                 }
-                case "heart" -> {
-                    heartCount++;
-                    gp.items[index] = null;
-                }
-                case "bomb" -> {
-                    bombCount++;
-                    gp.items[index] = null;
-                }
-                case "potion" -> {
-                    potionCount++;
-                    gp.items[index] = null;
-                }
+                case "heart" -> heartCount++;
+                case "bomb" -> bombCount++;
+                case "potion" -> potionCount++;
             }
+            gp.items[index] = null;
         }
     }
 
     public void interactEnemy(int index) {
         if (index != -1) {
             if (!invincible) {
+                gp.playSound(9);
+                heartCount--;
+                invincible = true;
+            }
+        }
+    }
+
+    public void interactMonster(int index){
+        if (index != -1){
+            if (!invincible){
+                gp.playSound(9);
                 heartCount--;
                 invincible = true;
             }
@@ -225,11 +282,37 @@ public class Player extends Entity {
         if (invincible) {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
         }
-
+        if (dying) {
+            dyingCounter++;
+            if (dyingCounter > 60) {
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+            } else if (dyingCounter > 55) {
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0f));
+            } else if (dyingCounter > 50) {
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+            } else if (dyingCounter > 45) {
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+            } else if (dyingCounter > 40) {
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0f));
+            } else if (dyingCounter > 35) {
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+            } else if (dyingCounter > 30) {
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0f));
+            } else if (dyingCounter > 25) {
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+            } else if (dyingCounter > 20) {
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0f));
+            } else if (dyingCounter > 15) {
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+            } else if (dyingCounter > 10) {
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0f));
+            } else if (dyingCounter > 5) {
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+            } else if (dyingCounter > 0) {
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0f));
+            }
+        }
         g2.drawImage(image, x, y, gp.tileSize, gp.tileSize, null);
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
     }
 }
-
-
-

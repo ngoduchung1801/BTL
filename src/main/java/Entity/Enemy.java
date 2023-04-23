@@ -7,25 +7,27 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Random;
 
-public class Enemy extends Entity{
+public class Enemy extends Entity {
     public Enemy(GamePanel gp) {
         super(gp);
 
         speed = 1;
         dir = "down";
         name = "enemy";
+        enemyLife = 1;
+        invincible = false;
 
-        hitBox.x = 1; // 8
-        hitBox.y = 1; // 4
-        hitBox.width = 46; // 32
-        hitBox.height = 46; // 40
+        hitBox.x = 8; // 8
+        hitBox.y = 4; // 4
+        hitBox.width = 32; // 32
+        hitBox.height = 40; // 40
         hitBoxDefaultX = hitBox.x;
         hitBoxDefaultY = hitBox.y;
 
         getImage();
     }
 
-    public void getImage(){
+    public void getImage() {
         try {
             up1 = ImageIO.read(new FileInputStream("src/main/resources/enemy/up1.png"));
             up2 = ImageIO.read(new FileInputStream("src/main/resources/enemy/up2.png"));
@@ -48,22 +50,22 @@ public class Enemy extends Entity{
         }
     }
 
-    public void setMove(){
+    public void setMove() {
         moveCounter++;
-        if (moveCounter == 48){
+        if (moveCounter == 48) {
             Random random = new Random();
-            int randomMove = random.nextInt(4) + 1;
+            int randomMove = random.nextInt(4) + 1; //4
 
-            if (randomMove == 1){
+            if (randomMove == 1) {
                 dir = "up";
             }
-            if (randomMove == 2){
+            if (randomMove == 2) {
                 dir = "down";
             }
-            if (randomMove == 3){
+            if (randomMove == 3) {
                 dir = "right";
             }
-            if (randomMove == 4){
+            if (randomMove == 4) {
                 dir = "left";
             }
             moveCounter = 0;

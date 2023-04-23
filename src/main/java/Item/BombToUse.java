@@ -13,10 +13,20 @@ public class BombToUse extends BombSpawn {
         super(gp);
         this.gp = gp;
         name = "explodeBomb";
-        bombMaxLife = 210;
+        bombMaxLife = 180; //3s
         bombLife = bombMaxLife;
         cost = 1;
         alive = false;
+
+        hitBox.x = 0;
+        hitBox.y = 0;
+        hitBox.width = 48;
+        hitBox.height = 48;
+        hitBoxDefaultX = hitBox.x;
+        hitBoxDefaultY = hitBox.y;
+
+//        bombCollisionToEntity = false;
+
         getImage();
     }
     public void getImage(){

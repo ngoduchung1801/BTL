@@ -19,13 +19,12 @@ public class Entity {
             down1, down2, down3, down4,
             right1, right2, right3, right4, right5, right6,
             left1, left2, left3, left4, left5, left6;
-    public BufferedImage bomb1, bomb2,center, vertical, horizontal, up, down, right, left;
+    public BufferedImage bomb1, bomb2, center, vertical, horizontal, up, down, right, left;
     public int Count = 0;
     public int verticalNum = 1;
     public int horizontalNum = 1;
     // Bomb
     public int bombImageNum = 1;
-    public int bombExplodeImage;
     public int bombLife;
     public int bombMaxLife;
     public int cost;
@@ -34,9 +33,10 @@ public class Entity {
 
     // Hitbox
     public Rectangle hitBox = new Rectangle(0, 0, 48, 48);
-    public int hitBoxDefaultX, hitBoxDefaultY;
+    public int hitBoxDefaultX = 0, hitBoxDefaultY = 0;
     public boolean collisionOn = false;
-    public boolean collision = false;
+    public boolean bombCollisionToPlayer = false;
+    public boolean bombCollisionToEntity = false;
     public int moveCounter = 0; // to change direction for enemy
     public boolean invincible = false; // for player to be invincible for a sec after contact to enemy
     public int invincibleCounter = 0; // count time for invincible
@@ -45,9 +45,21 @@ public class Entity {
     public int heartCount;
     public int bombCount;
     public int potionCount;
+    public int itemIndex;
     // Time
     public int minute;
     public double second;
+    public Flame flame0, flame1, flame2, flame3, flame4, flame5, flame6, flame7, flame8;
+    public String flameDir;
+    public int flameLife;
+    public int flameMaxLife;
+    public int enemyCount;
+    public int enemyLife = -1;
+    public int monsterLife = -1;
+    public int monsterCount;
+    public int spawnTime = 60;
+    public boolean dying = false;
+    public int dyingCounter = 0;
 
     public Entity(GamePanel gp) {
         this.gp = gp;
@@ -61,13 +73,20 @@ public class Entity {
 
         collisionOn = false;
         gp.CC.checkTile(this);
-        gp.CC.checkItem(this, false);
+
+        itemIndex = gp.CC.checkItem(this);
+        pickUpItem(itemIndex);
 
         boolean interactPlayer = gp.CC.checkPlayer(this);
         if (interactPlayer && !gp.player.invincible) {
+            gp.playSound(9);
             gp.player.heartCount--;
             gp.player.invincible = true;
         }
+
+        gp.CC.entityCheckBomb(this);
+        gp.CC.checkBrick(this);
+
         if (!collisionOn) {
             switch (dir) {
                 case "up" -> y -= speed;
@@ -99,6 +118,35 @@ public class Entity {
             }
             Count = 0;
         }
+        if (invincible) {
+            invincibleCounter++;
+            if (invincibleCounter > 60) {
+                invincible = false;
+                invincibleCounter = 0;
+            }
+        }
+
+        if (monsterLife == 1) {
+            speed = 3;
+            getImage2();
+        }
+    }
+
+    public void getImage2() {
+
+    }
+
+    public void pickUpItem(int index) {
+        if (index != -1) {
+            switch (gp.items[index].name) {
+                case "shoes" -> speed++;
+                case "heart" -> {
+                    enemyLife++;
+                    monsterLife++;
+                }
+            }
+            gp.items[index] = null;
+        }
     }
 
     public void draw(Graphics2D g2) {
@@ -108,8 +156,6 @@ public class Entity {
                 image = bomb1;
             } else if (bombImageNum == 2) {
                 image = bomb2;
-            } else if (bombImageNum == 0) {
-                image = center;
             }
         } else {
             switch (dir) {
@@ -159,7 +205,10 @@ public class Entity {
                 }
             }
         }
+        if (invincible) {
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+        }
         g2.drawImage(image, x, y, gp.tileSize, gp.tileSize, null);
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
     }
 }
-

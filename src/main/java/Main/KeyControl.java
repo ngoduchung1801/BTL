@@ -40,24 +40,48 @@ public class KeyControl implements KeyListener {
                 }
             }
         }
+        else if (gp.gameState == gp.stage2State) {
+            if (gp.player.heartCount > 0){
+                if (e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP) {
+                    upPressed = true;
+                }
+                if (e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    downPressed = true;
+                }
+                if (e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    rightPressed = true;
+                }
+                if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) {
+                    leftPressed = true;
+                }
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    gp.gameState = gp.pauseState;
+                }
+                if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                    spawnBomb = true;
+                }
+            }
+        }
         else if (gp.gameState == gp.playState) {
-            if (e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP) {
-                upPressed = true;
-            }
-            if (e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN) {
-                downPressed = true;
-            }
-            if (e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                rightPressed = true;
-            }
-            if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) {
-                leftPressed = true;
-            }
-            if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                gp.gameState = gp.pauseState;
-            }
-            if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                spawnBomb = true;
+            if (gp.player.heartCount > 0){
+                if (e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP) {
+                    upPressed = true;
+                }
+                if (e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    downPressed = true;
+                }
+                if (e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    rightPressed = true;
+                }
+                if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) {
+                    leftPressed = true;
+                }
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    gp.gameState = gp.pauseState;
+                }
+                if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                    spawnBomb = true;
+                }
             }
         }
         else if (gp.gameState == gp.pauseState) {
@@ -105,8 +129,30 @@ public class KeyControl implements KeyListener {
                 }
             }
         }
+        else if (gp.gameState == gp.winState) {
+            if (e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP) {
+                gp.ui.count--;
+                if (gp.ui.count < 0) {
+                    gp.ui.count = 1;
+                }
+            }
+            if (e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN) {
+                gp.ui.count++;
+                if (gp.ui.count > 1) {
+                    gp.ui.count = 0;
+                }
+            }
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                if (gp.ui.count == 0){
+                    gp.gameState = gp.playState;
+                    gp.restart();
+                }
+                if (gp.ui.count == 1){
+                    System.exit(0);
+                }
+            }
+        }
     }
-
 
     @Override
     public void keyReleased(KeyEvent e) {
